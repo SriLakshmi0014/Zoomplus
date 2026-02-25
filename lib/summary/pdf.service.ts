@@ -1,4 +1,4 @@
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import { PDFDocument, StandardFonts } from 'pdf-lib';
 
 type PdfInput = {
   title: string;
@@ -27,15 +27,12 @@ export async function generateSummaryPdf({
     }
   };
 
-  // Title
   page.drawText(title, { x: 50, y, size: 20, font: boldFont });
   y -= 30;
 
-  // Date
   page.drawText(`Date: ${date}`, { x: 50, y, size: 12, font });
   y -= 40;
 
-  // Optional summary section
   if (summary) {
     page.drawText('Summary:', {
       x: 50,
@@ -60,7 +57,6 @@ export async function generateSummaryPdf({
     y -= 30;
   }
 
-  // FULL TRANSCRIPT
   page.drawText('Full Lecture Transcript:', {
     x: 50,
     y,

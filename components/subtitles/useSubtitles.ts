@@ -15,9 +15,10 @@ export const useSubtitles = ({ enabled }: UseSubtitlesProps) => {
   const [subtitle, setSubtitle] = useState('');
 
   const recognitionRef = useRef<any>(null);
-  const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // ✅ Stores FULL lecture transcript (all sentences)
+  // ✅ FIXED TYPE (NO NodeJS)
+  const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const transcriptRef = useRef<TranscriptItem[]>([]);
 
   useEffect(() => {
@@ -49,16 +50,13 @@ export const useSubtitles = ({ enabled }: UseSubtitlesProps) => {
         if (!text) continue;
 
         if (result.isFinal) {
-          // ✅ STORE FINAL TEXT (ACCUMULATED)
           transcriptRef.current.push({
             text,
             timestamp: Date.now(),
           });
 
-          // show final sentence briefly
           setSubtitle(text);
         } else {
-          // 🔹 interim subtitle only (NOT stored)
           interimText += text + ' ';
         }
       }
@@ -67,7 +65,6 @@ export const useSubtitles = ({ enabled }: UseSubtitlesProps) => {
         setSubtitle(interimText.trim());
       }
 
-      // clear subtitle after silence
       if (silenceTimerRef.current) {
         clearTimeout(silenceTimerRef.current);
       }
@@ -103,7 +100,6 @@ export const useSubtitles = ({ enabled }: UseSubtitlesProps) => {
     };
   }, [enabled]);
 
-  // ✅ Returns FULL lecture transcript
   const getTranscript = () => transcriptRef.current;
 
   return { subtitle, getTranscript };
